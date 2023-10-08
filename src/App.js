@@ -2,6 +2,7 @@ import './App.css';
 import invTemp1 from "../src/assets/inv template.jpg";
 import invTemp2 from "../src/assets/inv template.jpg";
 import { useState } from 'react';
+import { Document, Page } from 'react-pdf';
 import TableComponent from './components/Table';
 
 function App() {
@@ -9,6 +10,26 @@ function App() {
   const [inputVal, setInputVal] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
   const [tableComponents, setTableComponents] = useState([{ key: 0, isTableShown: false }]);
+  const [isPreviewVisible, setIsPreviewVisisble] = useState(false);
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [formData, setFormData] = useState({
+    fromName: '',
+    fromEmail: '',
+    fromAddress: '',
+    fromCountry: '',
+    fromPostalCode: '',
+    fromPhone: '',
+    fromWebsite: '',
+  
+    billName: '',
+    billEmail: '',
+    billAddress: '',
+    billCountry: '',
+    billPostalCode: '',
+    billPhone: '',
+    billWebsite: '',
+  });
 
   const addTable = () => {
     setTableComponents(prevTableComponents => [
@@ -33,8 +54,11 @@ function App() {
     setSelectedImage(invImage);
   }
 
-  function handleInputChange(e){
-    setInputVal(e.target.value)
+  function handleInputChange(field, value){
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [field]: value,
+    }));
   }
 
   const handleImageUpload = (e) => {
@@ -49,6 +73,17 @@ function App() {
       reader.readAsDataURL(file);
     }
   };
+
+
+  const prevInvoice = () =>{
+    console.log("preview");
+    setIsPreviewVisisble(!isPreviewVisible);
+  }
+
+  const closePreview = () => {
+    console.log("close preview");
+    setIsPreviewVisisble(!isPreviewVisible);
+  };
   
 
   return (
@@ -61,6 +96,8 @@ function App() {
       </div>
 
       <section className='invoice-section'>
+        { !isPreviewVisible ?
+          <> 
         <div className='invoice'>
           
           <input className="invoice-input" value={inputVal} onChange={handleInputChange} type='text' placeholder='Enter Business Name' />
@@ -73,23 +110,23 @@ function App() {
           <div className='forms'>
           <form className='from'>
           <h3>From:</h3>
-          <div className='form-group'><label>Name</label> <input type='text' placeholder='Name' /><br /></div> 
-           <div className='form-group'><label>Email</label> <input type='text' placeholder='Email' /><br /></div>   
-           <div className='form-group'><label>Address</label> <input type='text' placeholder='Street' /><br /></div>
-           <div className='form-group'><label></label><input type='text' placeholder='City, State, Country' /><br /> </div>
-          <div className='form-group'><label></label><input type='text' placeholder='Postal Code' /><br /> </div>
-           <div className='form-group'><label>Phone</label> <input type='text' placeholder='(123) 456 789' /><br /></div>
-          <div className='form-group'><label>Website</label> <input type='text' placeholder='https://www.example.com' /></div>
+          <div className='form-group'><label>Name</label> <input type='text' placeholder='Name' value={formData.fromName} onChange={(e) => handleInputChange('fromName', e.target.value)} /><br /></div> 
+           <div className='form-group'><label>Email</label> <input type='text' placeholder='Email' value={formData.fromEmail} onChange={(e) => handleInputChange('fromEmail', e.target.value)}  /><br /></div>   
+           <div className='form-group'><label>Address</label> <input type='text' placeholder='Street' value={formData.fromAddress} onChange={(e) => handleInputChange('fromAddress', e.target.value)} /><br /></div>
+           <div className='form-group'><label></label><input type='text' placeholder='City, State, Country' value={formData.fromCountry} onChange={(e) => handleInputChange('fromCountry', e.target.value)}  /><br /> </div>
+          <div className='form-group'><label></label><input type='text' placeholder='Postal Code' value={formData.fromPostalCode} onChange={(e) => handleInputChange('fromPostalCode', e.target.value)}  /><br /> </div>
+           <div className='form-group'><label>Phone</label> <input type='text' placeholder='(123) 456 789' value={formData.fromPhone} onChange={(e) => handleInputChange('fromPhone', e.target.value)}  /><br /></div>
+          <div className='form-group'><label>Website</label> <input type='text' placeholder='https://www.example.com' value={formData.fromWebsite} onChange={(e) => handleInputChange('fromWebsite', e.target.value)}  /></div>
           </form>
 
           <form className='bill'>
           <h3>Bill To:</h3>
-          <div className='form-group'><label>Name</label> <input type='text' placeholder='Name' /><br /></div> 
-           <div className='form-group'><label>Email</label> <input type='text' placeholder='Email' /><br /></div>   
-           <div className='form-group'><label>Address</label> <input type='text' placeholder='Street' /><br /></div>
-           <div className='form-group'><label></label><input type='text' placeholder='City, State, Country' /><br /> </div>
-          <div className='form-group'><label></label><input type='text' placeholder='Postal Code' /><br /> </div>
-           <div className='form-group'><label>Phone</label> <input type='text' placeholder='(123) 456 789' /><br /></div>
+          <div className='form-group'><label>Name</label> <input type='text' placeholder='Name' value={formData.billName} onChange={(e) => handleInputChange('billName', e.target.value)} /><br /></div> 
+           <div className='form-group'><label>Email</label> <input type='text' placeholder='Email' value={formData.billEmail} onChange={(e) => handleInputChange('billEmail', e.target.value)} /><br /></div>   
+           <div className='form-group'><label>Address</label> <input type='text' placeholder='Street' value={formData.billAddress} onChange={(e) => handleInputChange('billAddress', e.target.value)} /><br /></div>
+           <div className='form-group'><label></label><input type='text' placeholder='City, State, Country' value={formData.billCountry} onChange={(e) => handleInputChange('billCountry', e.target.value)} /><br /> </div>
+          <div className='form-group'><label></label><input type='text' placeholder='Postal Code' value={formData.billPostalCode} onChange={(e) => handleInputChange('billPostalCode', e.target.value)} /><br /> </div>
+           <div className='form-group'><label>Phone</label> <input type='text' placeholder='(123) 456 789' value={formData.billWebsite} onChange={(e) => handleInputChange('billWebsite', e.target.value)} /><br /></div>
           </form>
 
           <br/>
@@ -146,15 +183,32 @@ function App() {
                 </div>
         </div>
         </div>
+         </> : 
+          "here is the pdf preview"
+           }
 
         <div className='actions'>
           <strong>ACTIONS</strong>
           <div className='action-btn'>
-          <button className='preview'><strong>PREVIEW INVOICE</strong></button>
+          <button className='preview' onClick={()=>{isPreviewVisible ? closePreview() : prevInvoice()}}><strong>{isPreviewVisible ? "BACK TO EDIT" : "PREVIEW INVOICE"}</strong></button>
           <button className='download'><strong>DOWNLOAD PDF</strong></button>
           </div>
         </div>
       </section>
+
+      {isPreviewVisible && (
+        <div className='overlay'>
+          <div className='invoice-preview'>
+            <button className='close-button' onClick={closePreview}>Close</button>
+            <Document file="path/to/your/invoice.pdf" onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+              <Page pageNumber={pageNumber} />
+            </Document>
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

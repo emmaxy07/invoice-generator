@@ -4,10 +4,11 @@ import invTemp2 from "../src/assets/inv template.jpg";
 import { useState } from 'react';
 import { Document, Page } from 'react-pdf';
 import TableComponent from './components/Table';
+import PreviewIframe from './components/PreviewIframe';
 
 function App() {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [inputVal, setInputVal] = useState("");
+  const [imgInputVal, setImgInputVal] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
   const [tableComponents, setTableComponents] = useState([{ key: 0, isTableShown: false }]);
   const [isPreviewVisible, setIsPreviewVisisble] = useState(false);
@@ -54,7 +55,11 @@ function App() {
     setSelectedImage(invImage);
   }
 
-  function handleInputChange(field, value){
+  function handleImageChange(e){
+    setImgInputVal(e.target.value);
+  }
+
+  function handleInputChange(field, value){ 
     setFormData((prevFormData) => ({
       ...prevFormData,
       [field]: value,
@@ -100,7 +105,7 @@ function App() {
           <> 
         <div className='invoice'>
           
-          <input className="invoice-input" value={inputVal} onChange={handleInputChange} type='text' placeholder='Enter Business Name' />
+          <input className="invoice-input" value={imgInputVal} onChange={handleImageChange} type='text' placeholder='Enter Business Name' />
 
           <div className='invoice-img'>
           <div>{imageUrl && (<img src={imageUrl} width="100px" height='80px' alt='' />)}</div> 
@@ -184,7 +189,11 @@ function App() {
         </div>
         </div>
          </> : 
-          "here is the pdf preview"
+          <>
+          <div>
+            <PreviewIframe formData={formData} />
+          </div>
+          </>
            }
 
         <div className='actions'>
@@ -195,20 +204,6 @@ function App() {
           </div>
         </div>
       </section>
-
-      {isPreviewVisible && (
-        <div className='overlay'>
-          <div className='invoice-preview'>
-            <button className='close-button' onClick={closePreview}>Close</button>
-            <Document file="path/to/your/invoice.pdf" onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
-              <Page pageNumber={pageNumber} />
-            </Document>
-            <p>
-              Page {pageNumber} of {numPages}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

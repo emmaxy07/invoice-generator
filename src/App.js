@@ -81,12 +81,10 @@ function App() {
 
 
   const prevInvoice = () =>{
-    console.log("preview");
     setIsPreviewVisisble(!isPreviewVisible);
   }
 
   const closePreview = () => {
-    console.log("close preview");
     setIsPreviewVisisble(!isPreviewVisible);
   };
   

@@ -1,5 +1,5 @@
 import React from 'react';
-import "./PreviewIframe.css";
+// import "./PreviewIframe.css";
 
 function PreviewIframe({ formData }) {
   const pdfContent = `<html>
@@ -86,8 +86,8 @@ function PreviewIframe({ formData }) {
   return (
     <iframe
       title="Preview"
-      width="100%"
-      height="100vh"
+      width="800px"
+    //   height="100vh"
       srcDoc={pdfContent}
     />
   );
